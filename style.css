@@ -1,0 +1,63 @@
+@font-face {
+    font-family: "finger";
+    src: url('./fonts/finger.ttf');
+  }
+
+*{
+    padding:0;
+    margin:0;
+}
+#portada{
+    height:700px;
+    width:100%;
+    background-color:rgba(0, 0, 0, 0.89);
+    }
+#titulo{
+    width: 50%;
+    height:30%;
+    float:left;
+    text-align: center;
+    font-family: "finger";
+    color:white;
+   
+
+}
+
+#titulo h1{
+    font-size:60px;
+}
+#instrucciones{
+    color:white;
+    font-family: "finger";
+    text-align: justify;
+    padding-left: 8px;
+}
+#instrucciones img{
+    width:500px;
+    display:block;
+    padding:20px;
+    cursor:pointer;
+}
+.ocultar{
+    display:none;
+}
+.contenedor{
+    width:90%;
+    height: 100%;
+    margin:0 auto;
+    
+}
+.contenedorc{
+    height:900;
+    width: 1200;
+}
+
+#imagen{
+    background-image: url("./img/samurai.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 50%;
+    height:100%;
+    float:left;
+}
