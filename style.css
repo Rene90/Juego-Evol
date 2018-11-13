@@ -8,7 +8,7 @@
     margin:0;
 }
 #portada{
-    height:700px;
+    height:900px;
     width:100%;
     background-color:rgba(0, 0, 0, 0.89);
     }
@@ -29,13 +29,17 @@
 #instrucciones{
     color:white;
     font-family: "finger";
-    text-align: justify;
+    text-align: center;
     padding-left: 8px;
+    margin-top:20px;
+}
+#instrucciones h2{
+    padding:20px;
 }
 #instrucciones img{
     width:500px;
     display:block;
-    padding:20px;
+    padding:30px;
     cursor:pointer;
 }
 .ocultar{

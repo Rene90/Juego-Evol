@@ -9,9 +9,15 @@ var images = {
     dragon:"./img/rene.png",
     titulo:"./img/samus.jpg",
     tanque:"./img/tanque.png",
-    malo:"./img/malo.png"
+    malo:"./img/malo.png",
+    gameover:"./img/gameover.jpg"
 }
 var enemigos = []
+var transformacion = "dragon"
+var guessedLetter = ''
+var imageGameOver = new Image()
+imageGameOver.srcset=images.gameover
+var scores = []
 //clases
 function Bg(){
     this.x =0
@@ -28,107 +34,104 @@ function Bg(){
         ctx.drawImage(this.image,this.x+this.width,this.y, this.width, this.height)
         
     }
+    this.drawScore = function(){
+        ctx.font ="bold 40px Helvetica"
+        ctx.fillStyle = "white"
+        ctx.fillText(Math.floor(frames/60),50,50)
+
+    }
     
 
 }
-function Mono(){
+function Mono(ente){
+    this.ente = "mono"
     this.frameIndex = 0
     this.tickCount = 0
     this.ticksPerFrame = 0
-    this.numberOfFrames = 3
-    this.x = 50
-    this.y = canvas.height-60
+    this.numberOfFrames = this.ente ==="dragon"?6:3
+    this.x = this.ente ==="dragon"? 50:50
+    this.y = this.ente ==="dragon"?100:canvas.height-60
     this.speedx = 0
     this.speedy = 0
-    this.height = 60
-    this.width = 180
+    this.height = this.ente ==="dragon"?66:60
+    this.width = this.ente ==="dragon"?308:180
     this.image = new Image()
-    this.image.src = images.mono
-    
+    //this.image.src = this.ente ==="dragon"?images.dragon:images.mono
+    this.ancho =80
+    this.altura =80
+    this.frames1 = 0
+    this.vida = 100
     this.draw = function(){
+        this.image.src = this.ente ==="dragon"?images.dragon:images.mono
+        
+        if(this.ente === "dragon" ) {
+            this.frames1++
+            this.y= this.y*1.02+.2
+        }
+
+        if(this.ente ==="dragon" && this.frames1%1000===0 ){
+            
+            this.frames1 = 0
+            this.image.src  =images.mono
+            this.ente ="mono"
+            this.vida = this.vida -10
+        }
        
         if(frames%10===0) {
             this.frameIndex++
             
         }
-        if(this.y+this.height> canvas.height-10){
-            this.y = canvas.height-this.height}
-        if(this.x+this.width> canvas.width-10){
-                this.x = canvas.width-this.width}
+        if (this.ente ==="dragon"){
+            if(this.y+this.altura> 350-10){
+                this.y = 350-this.altura}
+            if(this.x+this.ancho> canvas.width-10){
+                    this.x = canvas.width-this.ancho}
+            if(this.y<= 0){
+                    this.y = 0}
+            if(this.x<= 0){
+            this.x = 0}
+        }else{
+        if(this.y+this.altura> canvas.height-10){
+            this.y = canvas.height-this.altura}
+        if(this.x+this.ancho> canvas.width-10){
+                this.x = canvas.width-this.ancho}
         if(this.y<= 350){
                 this.y = 350}
         if(this.x<= 0){
         this.x = 0}
+        }
         
 
         
         if(this.frameIndex > this.numberOfFrames-1) this.frameIndex =0
-        ctx.drawImage(this.image,this.frameIndex * this.width / this.numberOfFrames,0,this.width / this.numberOfFrames,this.height,this.x,this.y,this.width / this.numberOfFrames,
-            this.height)
+        ctx.drawImage(this.image,this.frameIndex * this.width / this.numberOfFrames,0,this.width / this.numberOfFrames,this.height,this.x,this.y,this.ancho,this.altura)
     }
     this.newPos = function(){
+        if(this.ente ==="dragon"){
+        this.x += this.speedx+(this.speedx*1.2)
+        this.y += this.speedy+(this.speedy*1.2)
+        }else{
         this.x += this.speedx
         this.y += this.speedy 
+        }
     }
     this.isTouching = function(item){
+
         return (this.x < item.x+(item.width/5)) && 
-        (this.x+(this.width/3)>item.x)&&
+        (this.x+(80)>item.x)&&
         (this.y<item.y+item.height)&& 
-        (this.y+this.height>item.y)
+        (this.y+80>item.y)
+    }
+    this.drawLife= function(){
+        ctx.fillStyle = "red"
+        ctx.fillRect(canvas.width-150,30,100,30)
+        ctx.fillStyle = "white"
+        ctx.fillRect(canvas.width-150,30,this.vida,30)
+        ctx.filStyle = "orange"
+        ctx.strokeText("Vida",canvas.width-150,60)
     }
 }
-function Dragon(){
-    this.frameIndex = 0
-    this.tickCount = 0
-    this.ticksPerFrame = 0
-    this.numberOfFrames = 6
-    this.x = 0
-    this.y = 0
-    this.height = 66
-    this.width = 308
-    this.image = new Image()
-    this.image.src = images.dragon
-    
-    this.draw = function(){
-       
-        if(frames%10===0) {
-            this.frameIndex++
-            
-        }
 
-        
-        if(this.frameIndex > this.numberOfFrames-1) this.frameIndex =0
-        ctx.drawImage(this.image,this.frameIndex * this.width / this.numberOfFrames,0,this.width / this.numberOfFrames,this.height,this.x,this.y,this.width / this.numberOfFrames,
-            this.height)
-        
-    }
-}
-function Tanque(){
-    this.frameIndex = 0
-    this.tickCount = 0
-    this.ticksPerFrame = 0
-    this.numberOfFrames = 5
-    this.x = 0
-    this.y = 0
-    this.height = 63
-    this.width = 338
-    this.image = new Image()
-    this.image.src = images.tanque
-    
-    this.draw = function(){
-       
-        if(frames%10===0) {
-            this.frameIndex++
-            
-        }
-
-        
-        if(this.frameIndex > this.numberOfFrames-1) this.frameIndex =0
-        ctx.drawImage(this.image,this.frameIndex * this.width / this.numberOfFrames,0,this.width / this.numberOfFrames,this.height,0,0,this.width / this.numberOfFrames,
-            this.height)
-        
-    }
-}
 function Enemigo(position){
     this.frameIndex =0
     this.numberOfFrames=5
@@ -155,11 +158,14 @@ function Enemigo(position){
 }
 //isntancias 
 var personaje = new Mono()
-var dragon = new Dragon()
+
 var fondo = new Bg()
 
 //funciones princiaples
 function start(){
+    frames = 0
+    enemigos = []
+    personaje = new Mono()
     if(!interval){
         interval = setInterval(update,1000/60)}
 }
@@ -171,16 +177,34 @@ function update(){
     //dragon.draw()
     personaje.newPos()
     personaje.draw()
+    writeCorrectWord()
     drawEnemigos()
     checkCollition()
+    fondo.drawScore()
+    personaje.drawLife()
+
     
 }
+
+
 function gameOver(){
     clearInterval(interval)
     interval = null
-    ctx.font ="bold 80px Helvetica"
-    ctx.fillStyle = "white"
-    ctx.fillText("Game Over",200,200)
+    scores.push(Math.floor(frames/60))
+    ctx.clearRect(0,0,canvas.width,canvas.height)
+   
+    ctx.drawImage(imageGameOver,0,0,canvas.width,canvas.height)
+    
+    ctx.font ="bold 100px Helvetica"
+    ctx.fillStyle = "black"
+    ctx.fillText("Game Over",300,300)
+    for(let i =0;i<scores.length;i++){
+    ctx.font ="bold 60px Helvetica"
+    ctx.fillStyle = "orange"
+    ctx.fillText(i+1+" Player Score: "+ scores[i],300,600+(i*50))
+    }
+    if(scores.length === 2) scores=[]
+    
   }
 function drawCover(){
     var img = new Image()
@@ -198,7 +222,7 @@ function drawCover(){
 }
 //funciones auxiliares
 function generador(){
-    if(frames%180 ===0){
+    if(Math.random()<1-Math.pow(.993,frames/1000)){
       
       var posicion =Math.floor(Math.random()*((canvas.height-63)-350)+350)
       enemigos.push(new Enemigo(posicion))
@@ -211,9 +235,11 @@ function generador(){
     })
   }
   function checkCollition(){
-    enemigos.forEach(function(obs){
+    enemigos.forEach(function(obs,index){
       if(personaje.isTouching(obs)){
-        gameOver()
+        enemigos.splice(index,1)
+        personaje.vida -=20
+        if(personaje.vida <=0)gameOver()
       }
     })
   }
@@ -260,6 +286,59 @@ document.onkeydown=function(e){
       break;
     }
 }
+/*function writeCorrectLetter(pos){
+    var letra = transformacion[pos]
+    ctx.font="30px Avenir"
+    ctx.fillStyle="white"
+    ctx.strokeText(letra,520+index*50,100)
+
+}*/
+function writeCorrectWord(pos){
+    ctx.font="90px Helvetica"
+    ctx.fillStyle="white"
+    ctx.fillText(guessedLetter,520,100)
+
+}
+function addCorrectLetter(i){
+    guessedLetter+= transformacion[i]
+}
+function checkDragon(){
+    if(guessedLetter===transformacion){
+        guessedLetter = ''
+        return true
+    }
+}
+document.onkeypress=function(e){
+    var keyCode = e.keyCode
+    var key = e.key
+    if(transformacion.indexOf(key) !== -1){
+        var posicion = transformacion.indexOf(key);
+        var pos = [posicion]
+        addCorrectLetter(posicion)
+        //writeCorrectLetter(posicion)
+        while (posicion != -1) {
+          
+          posicion = transformacion.indexOf(key, posicion + 1);
+          if(posicion!=-1){
+          pos.push(posicion)
+          addCorrectLetter(posicion)
+          //writeCorrectLetter(posicion)
+          }
+
+        }
+        if(checkDragon()){
+          personaje.ente = "dragon"
+        }
+        
+        
+        
+        
+      }else{
+        guessedLetter=""
+        ctx.clearRect(0,0,canvas.width,canvas.height)
+      }
+}
+
 document.onkeyup = function(e){
     stopMove();
   }
