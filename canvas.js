@@ -13,6 +13,7 @@ var images = {
     gameover:"./img/gameover.jpg"
 }
 var enemigos = []
+var disparos = []
 var transformacion = "dragon"
 var guessedLetter = ''
 var imageGameOver = new Image()
@@ -104,7 +105,11 @@ function Mono(ente){
 
         
         if(this.frameIndex > this.numberOfFrames-1) this.frameIndex =0
+        if(this.ente ==="dragon"){
+            ctx.drawImage(this.image,this.frameIndex * this.width / this.numberOfFrames,0,this.width / this.numberOfFrames,this.height,this.x,this.y,this.ancho+20,this.altura+20)
+        }else{
         ctx.drawImage(this.image,this.frameIndex * this.width / this.numberOfFrames,0,this.width / this.numberOfFrames,this.height,this.x,this.y,this.ancho,this.altura)
+        }
     }
     this.newPos = function(){
         if(this.ente ==="dragon"){
@@ -156,13 +161,38 @@ function Enemigo(position){
     }
 
 }
+function Disparo(x,y){
+    this.x =x
+    this.y =y
+    this.radius= 10
+    this.draw = function(){
+        this.x = this.x +5
+        this.y = this.y +5
+        ctx.beginPath()
+        ctx.fillStyle="red"
+        ctx.arc(this.x,this.y,this.radius,0,(Math.PI*2),true)
+        ctx.fill()
+        ctx.closePath()
+
+    }
+    this.isTouching = function(item){
+
+        return (this.x < item.x+(item.width/5)) && 
+        (this.x+this.radius>item.x)&&
+        (this.y<item.y+item.height)&& 
+        (this.y+this.radius>item.y)
+    }
+}
 //isntancias 
 var personaje = new Mono()
 
 var fondo = new Bg()
+var cancion = new Musica()
 
 //funciones princiaples
 function start(){
+    cancion.reload()
+    cancion.play()
     frames = 0
     enemigos = []
     personaje = new Mono()
@@ -182,12 +212,15 @@ function update(){
     checkCollition()
     fondo.drawScore()
     personaje.drawLife()
+    drawDisparos()
+    limpiar()
 
     
 }
 
 
 function gameOver(){
+    cancion.pause()
     clearInterval(interval)
     interval = null
     scores.push(Math.floor(frames/60))
@@ -198,11 +231,15 @@ function gameOver(){
     ctx.font ="bold 100px Helvetica"
     ctx.fillStyle = "black"
     ctx.fillText("Game Over",300,300)
+    ctx.font ="bold 30px Helvetica"
+    ctx.fillStyle = "black"
+    ctx.fillText("Presiona barra espaciadora para partida nueva",300,450)
     for(let i =0;i<scores.length;i++){
     ctx.font ="bold 60px Helvetica"
     ctx.fillStyle = "orange"
-    ctx.fillText(i+1+" Player Score: "+ scores[i],300,600+(i*50))
+    ctx.fillText(i+1+" Player Score: "+ scores[i],300,600+(i*70))
     }
+    
     if(scores.length === 2) scores=[]
     
   }
@@ -221,6 +258,20 @@ function drawCover(){
     }
 }
 //funciones auxiliares
+function Musica(){
+    this.music = new Audio()
+    this.music.src="http://66.90.93.122/ost/zelda-reorchestrated-09-twilight-princess/fondpuoc/03%20-%20OrdonVillage.mp3"
+    this.play = function(){
+        this.music.play()
+      }
+    this.pause = function(){
+        this.music.pause()
+    }
+    this.reload = function(){
+        this.music.load()
+    }
+
+}
 function generador(){
     if(Math.random()<1-Math.pow(.993,frames/1000)){
       
@@ -241,18 +292,29 @@ function generador(){
         personaje.vida -=20
         if(personaje.vida <=0)gameOver()
       }
+      disparos.forEach(function(dis,ind){
+          if(dis.isTouching(obs)){
+              enemigos.splice(index,1)
+              disparos.splice(ind,1)
+          }
+      })
     })
+  }
+  function limpiar(){
+      enemigos.forEach(function(obs,index){
+          if(obs.x+(obs.width/8)<0)  enemigos.splice(index,1)
+      })
   }
 
 
 
 //funciones de movilidad del personaje
 function moveLeft(){
-    console.log("iz")
+    
     personaje.speedx -=1;
   }
   function moveRight(){
-    console.log("der")
+    
     personaje.speedx +=1;
   }
   function moveUp(){
@@ -265,7 +327,16 @@ function moveLeft(){
     personaje.speedx = 0;
     personaje.speedy = 0;
   }
-
+  function fire(){
+      var dis = new Disparo(personaje.x+40,personaje.y+40)
+      disparos.push(dis)
+  }
+  function drawDisparos(){
+      disparos.forEach(function(el){
+          el.draw()
+      })
+      
+  }
 
 document.onkeydown=function(e){
     switch(e.keyCode){
@@ -283,6 +354,11 @@ document.onkeydown=function(e){
       break;
       case 40:
       moveDown()
+      break;
+      case 70:
+      if(personaje.ente==="dragon"){
+          fire()}
+        
       break;
     }
 }
