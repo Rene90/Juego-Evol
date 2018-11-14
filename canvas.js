@@ -191,12 +191,13 @@ var cancion = new Musica()
 
 //funciones princiaples
 function start(){
+    if(!interval){
     cancion.reload()
     cancion.play()
     frames = 0
     enemigos = []
     personaje = new Mono()
-    if(!interval){
+    
         interval = setInterval(update,1000/60)}
 }
 function update(){
