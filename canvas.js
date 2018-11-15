@@ -225,6 +225,7 @@ function gameOver(){
     cancion.pause()
     clearInterval(interval)
     interval = null
+    if(scores.length === jugadoresnum) scores=[]
     scores.push(Math.floor(frames/60))
     ctx.clearRect(0,0,canvas.width,canvas.height)
     console.log(scores)
@@ -243,7 +244,7 @@ function gameOver(){
     ctx.fillText(i+1+" Player Score: "+ scores[i],300,600+(i*70))
     }
     
-    if(scores.length === jugadoresnum) scores=[]
+    
     
   }
 function drawCover(){

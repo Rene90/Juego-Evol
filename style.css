@@ -52,6 +52,7 @@ input{
     display:block;
     padding:30px;
     cursor:pointer;
+    margin-left:155px;
 }
 .ocultar{
     display:none;
