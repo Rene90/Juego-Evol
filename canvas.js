@@ -1,6 +1,7 @@
 var canvas =document.getElementById("c")
 var ctx = canvas.getContext("2d")
 //variables
+var jugadoresnum
 var frames=0
 var interval
 var images = {
@@ -92,7 +93,7 @@ function Mono(ente){
             if(this.x<= 0){
             this.x = 0}
         }else{
-        if(this.y+this.altura> canvas.height-10){
+        if(this.y+this.altura> canvas.height){
             this.y = canvas.height-this.altura}
         if(this.x+this.ancho> canvas.width-10){
                 this.x = canvas.width-this.ancho}
@@ -226,6 +227,7 @@ function gameOver(){
     interval = null
     scores.push(Math.floor(frames/60))
     ctx.clearRect(0,0,canvas.width,canvas.height)
+    console.log(scores)
    
     ctx.drawImage(imageGameOver,0,0,canvas.width,canvas.height)
     
@@ -241,7 +243,7 @@ function gameOver(){
     ctx.fillText(i+1+" Player Score: "+ scores[i],300,600+(i*70))
     }
     
-    if(scores.length === 2) scores=[]
+    if(scores.length === jugadoresnum) scores=[]
     
   }
 function drawCover(){
@@ -312,17 +314,17 @@ function generador(){
 //funciones de movilidad del personaje
 function moveLeft(){
     
-    personaje.speedx -=1;
+    personaje.speedx -=2;
   }
   function moveRight(){
     
-    personaje.speedx +=1;
+    personaje.speedx +=2;
   }
   function moveUp(){
-      personaje.speedy -=1;
+      personaje.speedy -=2;
   }
   function moveDown(){
-      personaje.speedy +=1;
+      personaje.speedy +=2;
   }
   function stopMove(){
     personaje.speedx = 0;
@@ -343,6 +345,7 @@ document.onkeydown=function(e){
     switch(e.keyCode){
         case 32:
         start()
+        jugadoresnum = document.getElementById('jugadores').value
         break;
         case 37:
       moveLeft()
